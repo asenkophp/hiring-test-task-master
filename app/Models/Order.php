@@ -15,10 +15,9 @@ class Order extends Model
     public const STATUS_PAID = 'paid';
     public const STATUS_SHIPPED = 'shipped';
     public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_FAILED = 'failed';
 
     protected $table = 'orders';
-
-    public $relation = 'orders';
 
     protected $fillable = [
         'customer_id',
@@ -33,8 +32,6 @@ class Order extends Model
         'total' => 'decimal:2',
     ];
 
-    protected $with = ['items'];
-
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
@@ -48,15 +45,5 @@ class Order extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(OrderLog::class);
-    }
-
-    public function getDisplayTotalAttribute(): string
-    {
-        $sum = 0;
-        foreach ($this->items as $item) {
-            $sum += $item->product->price * $item->quantity;
-        }
-
-        return number_format($sum, 2);
     }
 }

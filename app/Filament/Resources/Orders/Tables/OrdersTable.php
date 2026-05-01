@@ -18,6 +18,11 @@ class OrdersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) =>
+                $query
+                    ->with('customer')
+                    ->withCount('logs')
+            )
             ->columns([
 
                 TextColumn::make('id')
@@ -36,11 +41,11 @@ class OrdersTable
                         'danger'  => Order::STATUS_CANCELLED,
                     ]),
 
-                TextColumn::make('display_total')
-                    ->label('Total'),
+                TextColumn::make('total')
+                    ->label('Total')
+                    ->money('USD'),
 
                 TextColumn::make('logs_count')
-                    ->counts('logs')
                     ->label('Events'),
 
                 TextColumn::make('created_at')
